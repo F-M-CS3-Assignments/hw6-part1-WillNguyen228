@@ -64,7 +64,6 @@ class RedBlackTree {
 		
 		RBTNode *CopyOf(const RBTNode *node);
 
-
 		RBTNode *Get(int data) const;
 
 };
