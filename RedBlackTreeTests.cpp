@@ -18,6 +18,7 @@ void TestSimpleConstructor(){
 void TestConstructor(){
 	cout << "Testing Constructor W/Int Input..." << endl;
 	RedBlackTree rbt = RedBlackTree(15);
+	cout << rbt.ToPrefixString() << endl;
 	assert(rbt.ToPrefixString() == " B15 ");
 
 	cout << "PASSED!"<< endl << endl;
@@ -51,14 +52,18 @@ void TestInsertSecondNode(){
 	cout << "PASSED!" << endl << endl;
 }
 
-
 void TestInsertThirdNode(){
 	cout << "Testing Insert Third Node..." << endl;
 	RedBlackTree *rbt = new RedBlackTree();
 	rbt->Insert(30);
+	// cout << "prefix: "  << rbt->ToPrefixString() << endl;
+	// cout << "infix: "  << rbt->ToInfixString() << endl;
 	rbt->Insert(15);
+	// cout << "prefix: "  << rbt->ToPrefixString() << endl;
+	// cout << "infix: "  << rbt->ToInfixString() << endl;
 	rbt->Insert(10); // Left Left
-	//cout << "rbt: "  << rbt->ToPrefixString() << endl;
+	// cout << "prefix: "  << rbt->ToPrefixString() << endl;
+	// cout << "infix: "  << rbt->ToInfixString() << endl;
 	assert(rbt->ToPrefixString() == " B15  R10  R30 ");
 	delete rbt;
 	
@@ -78,8 +83,40 @@ void TestInsertThirdNode(){
 	
 	// more tests go here
 	// consider some symmetry!
+
+	// Case 3: Easy case (no violation)
+	rbt = new RedBlackTree();
+	rbt->Insert(30);
+	rbt->Insert(15);
+	rbt->Insert(45); // Easy case
+	assert(rbt->ToPrefixString() == " B30  R15  R45 ");
+	delete rbt;
+
+	// Case 4: Right Right (rotation needed)
+	rbt = new RedBlackTree();
+	rbt->Insert(10);
+	rbt->Insert(20);
+	rbt->Insert(30); // Right Right
+	assert(rbt->ToPrefixString() == " B20  R10  R30 ");
+	delete rbt;
+
+	// Case 5: Left Right (rotation needed)
+	rbt = new RedBlackTree();
+	rbt->Insert(30);
+	rbt->Insert(10);
+	rbt->Insert(20); // Left Right
+	assert(rbt->ToPrefixString() == " B20  R10  R30 ");
+	delete rbt;
+
+	// Case 6: All nodes same side, no rotation needed (easy case)
+	rbt = new RedBlackTree();
+	rbt->Insert(10);
+	rbt->Insert(5);
+	rbt->Insert(15); // No rotation needed immediately (structure OK after recoloring)
+	assert(rbt->ToPrefixString() == " B10  R5  R15 ");
+	delete rbt;
 	
-	cout << "TESTS MISSING" << endl << endl;
+	// cout << "TESTS MISSING" << endl << endl;
 	cout << "PASSED!" << endl << endl;
 }
 

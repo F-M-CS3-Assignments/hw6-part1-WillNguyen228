@@ -45,17 +45,48 @@ RBTNode* RedBlackTree::CopyOf(const RBTNode *node) {
     return copy;
 }
 
-
+// Helper function to print Prefix traveral order
+// Prefix = current node -> left subtree -> right subtree
 string RedBlackTree::ToPrefixString(const RBTNode *n) {
-    if (n == nullptr) return "";  // If the node is null, return an empty string
-    // Visit root, then left and right children
-    return std::to_string(n->data) + " " + ToPrefixString(n->left) + ToPrefixString(n->right);
+    if (n == nullptr || n->IsNullNode) {
+        return ""; // Null or empty node, return empty string
+    }
+
+    string result = "";
+
+    result += GetNodeString(n);
+
+    if (n->left != nullptr) {
+        result += ToPrefixString(n->left);
+    }
+
+    if (n->right != nullptr) {
+        result += ToPrefixString(n->right);
+    }
+
+    return result;
 }
 
+// Helper function to print Postfix traveral order
+// Postfix = left subtree -> right subtree -> current node
 string RedBlackTree::ToPostfixString(const RBTNode *n) {
-    if (n == nullptr) return "";  // If the node is null, return an empty string
-    // Visit left and right children, then root
-    return ToPostfixString(n->left) + ToPostfixString(n->right) + " " + std::to_string(n->data);
+    if (n == nullptr || n->IsNullNode) {
+        return ""; // Null or empty node, return empty string
+    }
+
+    string result = "";
+
+    if (n->left != nullptr) {
+        result += ToPostfixString(n->left);
+    }
+
+    if (n->right != nullptr) {
+        result += ToPostfixString(n->right);
+    }
+
+    result += GetNodeString(n);
+
+    return result;
 }
 
 // Helper function to print Infix traveral order
@@ -112,7 +143,7 @@ string RedBlackTree::GetColorString(const RBTNode *n) {
 }
 
 void RedBlackTree::Insert(int newData) {
-    // Create a new node using the struct
+    // Create a new node using the struct 
     RBTNode* newNode = new RBTNode();
     newNode->data = newData;
     newNode->color = COLOR_RED;  // new nodes are red by default in Red Black Trees
@@ -120,8 +151,8 @@ void RedBlackTree::Insert(int newData) {
     // Insert it into the tree
     BasicInsert(newNode);
 
-    // Fix any Red-Black Tree property violations
-    // InsertFixUp(newNode);
+    // Follow the binary serach tree to add the node as the leaf node
+    InsertFixUp(newNode);
 
     // Update the number of items
     numItems++;
@@ -264,7 +295,7 @@ bool RedBlackTree::IsRightChild(RBTNode *node) const {
 // Rotates the node to the left
 void RedBlackTree::LeftRotate(RBTNode *node) {
     RBTNode *pivot = node->right;
-    if (pivot == nullptr) return; // Safety
+    if (pivot == nullptr) return; 
 
     node->right = pivot->left;
     if (pivot->left != nullptr) {
