@@ -194,11 +194,6 @@ void TestCopyConstructor(){
 	cout << "PASSED!" << endl << endl;
 }
 
-
-
-
-
-
 void TestContains(){
 	cout << "Testing Contains..." << endl;
 
@@ -225,9 +220,6 @@ void TestContains(){
 	cout << "PASSED!" << endl << endl;
 }
 
-
-
-
 void TestGetMinimumMaximum(){
 	cout << "Testing Get Minimum and Get Maximum..." << endl;
 
@@ -235,10 +227,6 @@ void TestGetMinimumMaximum(){
 
 	cout << "PASSED!" << endl << endl;
 }
-
-
-
-
 
 int main(){
 
