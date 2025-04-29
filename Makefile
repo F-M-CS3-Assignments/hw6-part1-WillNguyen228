@@ -5,6 +5,8 @@ all:
 	# g++ -Wall -g RedBlackTree.o RedBlackTreeTestsFirstStep.o -o rbt
 	g++ -Wall -g RedBlackTree.o RedBlackTreeTests.o -o rbt
 
+	#valgrind --leak-check=full ./rbt
+
 run:
 	./rbt
 	

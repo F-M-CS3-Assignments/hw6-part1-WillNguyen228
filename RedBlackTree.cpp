@@ -19,7 +19,7 @@ RedBlackTree::RedBlackTree(int newData) {
     root->right = nullptr;
     root->parent = nullptr;
     root->IsNullNode = false;   // It's a real node
-    numItems = 1;               // Tree has one item
+    numItems = 1;               // Tree has only one item
 }
 
 // Creates a copy constructor that creates a new red-black tree
@@ -143,6 +143,11 @@ string RedBlackTree::GetColorString(const RBTNode *n) {
 }
 
 void RedBlackTree::Insert(int newData) {
+    // First, check if the value already exists
+    if (Contains(newData)) {
+        throw std::invalid_argument("Duplicate value insertion is not allowed.");
+    }
+
     // Create a new node using the struct 
     RBTNode* newNode = new RBTNode();
     newNode->data = newData;
@@ -152,7 +157,9 @@ void RedBlackTree::Insert(int newData) {
     BasicInsert(newNode);
 
     // Follow the binary serach tree to add the node as the leaf node
-    InsertFixUp(newNode);
+    if(newNode->parent != nullptr && newNode->parent->color == COLOR_RED) {
+        InsertFixUp(newNode);
+    }
 
     // Update the number of items
     numItems++;
@@ -165,7 +172,7 @@ bool RedBlackTree::Contains(int data) const {
 
 int RedBlackTree::GetMin() const {
     if (root == nullptr) {
-        throw std::runtime_error("Tree is empty");
+        throw std::runtime_error("Red Black Tree is empty");
     }
     
     RBTNode *current = root;
@@ -272,12 +279,16 @@ void RedBlackTree::InsertFixUp(RBTNode *node) {
 
 // Returns the uncle of a node
 RBTNode* RedBlackTree::GetUncle(RBTNode *node) const {
+    // Check if the node or its predecessor are null
     if (node == nullptr || node->parent == nullptr || node->parent->parent == nullptr) {
         return nullptr;
     }
+    // Check if the node's parent is a left child of its grandparent
     if (IsLeftChild(node->parent)) {
+        // If the parent is a left child, the uncle is the right child of the grandparent
         return node->parent->parent->right;
     } else {
+        // Otherwise, the uncle is the left child of the grandparent
         return node->parent->parent->left;
     }
 }
@@ -294,31 +305,39 @@ bool RedBlackTree::IsRightChild(RBTNode *node) const {
 
 // Rotates the node to the left
 void RedBlackTree::LeftRotate(RBTNode *node) {
+    // Set the pivot node to be the right child of the node
     RBTNode *pivot = node->right;
-    if (pivot == nullptr) return; 
+    if (pivot == nullptr) return; //If the pivot is null, we can't perform the rotation, so return
 
+    //Move the right child of the pivot to the left child of the node
     node->right = pivot->left;
+
+    //If the pivot's left child is not empty, update its parent's pointer
     if (pivot->left != nullptr) {
         pivot->left->parent = node;
     }
 
+    //Adjust the parent pointer
     pivot->parent = node->parent;
+    //If node has o parent, set the pivot as the root
     if (node->parent == nullptr) {
         root = pivot;
+    // If not, adjust the parent's left or right pointer to point to the pivot
     } else if (IsLeftChild(node)) {
         node->parent->left = pivot;
     } else {
         node->parent->right = pivot;
     }
 
-    pivot->left = node;
-    node->parent = pivot;
+    pivot->left = node; // the node now finally becomes the left child of the pivot
+    node->parent = pivot; // the parent of the node is now the pivot
 }
 
 // Rotates the node to the right
 void RedBlackTree::RightRotate(RBTNode *node) {
+    //Similarly to left just the inverse 
     RBTNode *pivot = node->left;
-    if (pivot == nullptr) return; // Safety
+    if (pivot == nullptr) return; 
 
     node->left = pivot->right;
     if (pivot->right != nullptr) {
@@ -341,15 +360,35 @@ void RedBlackTree::RightRotate(RBTNode *node) {
 // Search for a node with the given data
 RBTNode* RedBlackTree::Get(int data) const {
     RBTNode *current = root;
+    //Similar principle to a binary tree
 
     while (current != nullptr) {
         if (data == current->data) {
             return current;
-        } else if (data < current->data) {
+        } else if (data < current->data) { //If it is smaller, move to the left
             current = current->left;
-        } else {
+        } else { //If it not, move to the right
             current = current->right;
         }
     }
     return nullptr; // Not found
+}
+
+// Destructor to delete the entire tree
+RedBlackTree::~RedBlackTree() {
+    DeleteTree(root);  // Call the helper function to delete all nodes
+}
+
+// Helper function to delete all nodes
+void RedBlackTree::DeleteTree(RBTNode* node) {
+    if (node == nullptr) {
+        return;
+    }
+
+    // Recursively delete the left and right subtrees
+    DeleteTree(node->left);
+    DeleteTree(node->right);
+
+    // Delete the current node
+    delete node;
 }

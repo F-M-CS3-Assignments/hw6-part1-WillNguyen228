@@ -27,6 +27,7 @@ class RedBlackTree {
 		RedBlackTree();
 		RedBlackTree(int newData);
 		RedBlackTree(const RedBlackTree &rbt);
+		~RedBlackTree();  // Declaring the destructor
 
 		string ToInfixString() const {return ToInfixString(root);};
 		string ToPrefixString() const { return ToPrefixString(root);};
@@ -66,6 +67,8 @@ class RedBlackTree {
 
 		RBTNode *Get(int data) const;
 
+		// Helper function to delete all nodes
+		void DeleteTree(RBTNode* node);
 };
 
 #endif
